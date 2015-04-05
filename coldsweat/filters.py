@@ -61,6 +61,12 @@ def datetime(value):
     if value:        
         return utilities.format_datetime(value)
     return '—'
+    
+@filter('iso_datetime')
+def iso_datetime(value):
+    if value:        
+        return utilities.format_iso_datetime(value)
+    return ''    
 
 @filter('date')
 def date(value):

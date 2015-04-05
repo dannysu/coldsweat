@@ -18,6 +18,8 @@ from config import *
 # Define an informal API for plugin implementations
 
 __all__ = [
+    'FEED_TAG_URI',
+    'ENTRY_TAG_URI',
     'VERSION_STRING',
     'USER_AGENT',
     # Configuration
@@ -31,6 +33,10 @@ __all__ = [
 
 VERSION_STRING  = '%d.%d.%d%s' % __version__
 USER_AGENT      = 'Coldsweat/%s Feed Fetcher <http://lab.passiomatic.com/coldsweat/>' % VERSION_STRING
+
+# Synthesized entries and feed URI's 
+FEED_TAG_URI    = 'tag:lab.passiomatic.com,%d:coldsweat:feed:%s'
+ENTRY_TAG_URI   = 'tag:lab.passiomatic.com,%d:coldsweat:entry:%s'
          
 # Figure out installation directory. This has 
 #  to work for the fetcher script too

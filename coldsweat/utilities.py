@@ -6,7 +6,7 @@ Copyright (c) 2013—2015 Andrea Peltrin
 Portions are copyright (c) 2013 Rui Carmo
 License: MIT (see LICENSE for details)
 """
-import re, cgi, urllib, urlparse
+import os, re, cgi, urllib, urlparse
 from hashlib import md5, sha1
 import base64
 from calendar import timegm
@@ -36,7 +36,7 @@ def make_data_uri(content_type, data):
 
 
 # --------------------
-# Hash functions
+# Hash functions & co.
 # --------------------
 
 def make_md5_hash(s):      
@@ -45,6 +45,13 @@ def make_md5_hash(s):
 def make_sha1_hash(s):          
     return sha1(encode(s)).hexdigest()
 
+def make_nonce():
+    try:
+        nonce = os.urandom(16)
+    except NotImplementedError: 
+        # urandom might not be available on certain platforms
+        nonce = datetime.now().isoformat()
+    return nonce.encode('base64')
             
 # --------------------
 # Date/time functions
@@ -76,6 +83,10 @@ def format_http_datetime(value):
 def format_datetime(value, format='%a, %b %d at %H:%M'):
     return value.strftime(format)
 
+def format_iso_datetime(value):
+    # Unlike datetime.isoformat() assume UTC 
+    return format_datetime(value, format='%Y-%m-%dT%H:%M:%SZ')
+    
 def format_date(value):
     return format_datetime(value, '%b %d, %Y')
 
@@ -127,7 +138,17 @@ def datetime_since_today(value, comparsion_value=None):
 # Misc.
 # --------------------
 
-def render_template(filename, namespace):                    
+def render_template(filename, namespace, filters_module=None):                    
+    # Install template filters if given
+    if filters_module:
+        filters_namespace = {}
+        for name in filters_module.__all__:
+            filter = getattr(filters_module, name)
+            filters_namespace[filter.name] = filter
+        # @@HACK Remove conflicting filters with HTMLTemplate
+        del filters_namespace['html'] 
+        # Update namespace, possibly overriding names
+        namespace.update(filters_namespace)
     return HTMLTemplate.from_filename(filename, namespace=namespace).substitute()
     
 class Struct(dict):
