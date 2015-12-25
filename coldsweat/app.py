@@ -68,7 +68,7 @@ class WSGIApp(object):
                             
         # Save request object for handlers
         self.request            = request
-        self.application_url    = request.application_url
+        self.application_url    = "//" + request.host
         
         response = handler(*args)
         if not response:
