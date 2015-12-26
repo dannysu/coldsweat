@@ -422,7 +422,7 @@ def scrub_url(url):
     # Special case for badly formatted URL
     if len(d.items()) == 0:
         cleaned_qs = query
-    else
+    else:
         d = dict((k, v) for k, v in d.items() if k not in BLACKLIST_QS)
         cleaned_qs = urllib.urlencode(d, doseq=True)
     return urlparse.urlunsplit((scheme, netloc, path, cleaned_qs, fragment))
