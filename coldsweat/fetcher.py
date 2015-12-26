@@ -418,8 +418,14 @@ def scrub_url(url):
     '''
     scheme, netloc, path, query, fragment = urlparse.urlsplit(url)
     d = urlparse.parse_qs(query)
-    d = dict((k, v) for k, v in d.items() if k not in BLACKLIST_QS)
-    return urlparse.urlunsplit((scheme, netloc, path, urllib.urlencode(d, doseq=True), fragment))
+
+    # Special case for badly formatted URL
+    if len(d.items()) == 0:
+        cleaned_qs = query
+    else
+        d = dict((k, v) for k, v in d.items() if k not in BLACKLIST_QS)
+        cleaned_qs = urllib.urlencode(d, doseq=True)
+    return urlparse.urlunsplit((scheme, netloc, path, cleaned_qs, fragment))
 
 
 def fetch_url(url, timeout=10, etag=None, modified_since=None):
